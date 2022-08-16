@@ -1,12 +1,24 @@
 ﻿using System;
-
-namespace MyApp // Note: actual namespace depends on the project name.
+using GLFW;
+using static OpenGL.GL;
+class Program
 {
-    internal class GameWithoutGameEngine
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        using (var window = new NativeWindow(800, 600, "MyWindowTitle"))
         {
-            Console.WriteLine("Hello World!");
+            // Main application loop
+            while (!window.IsClosing)
+            {
+                // OpenGL rendering
+                // Implement any timing for flow control, etc (see Glfw.GetTime())
+
+                // Swap the front/back buffers
+                window.SwapBuffers();
+
+                // Poll native operating system events (must be called or OS will think application is hanging)
+                Glfw.PollEvents();
+            }
         }
     }
 }
