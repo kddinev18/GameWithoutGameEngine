@@ -4,7 +4,17 @@
 int main()
 {
     GLFWInit();
-
+    GLFWwindow* window = glfwCreateWindow(800,800,"Hello Window", NULL, NULL);
+    if (window != NULL)
+    {
+        glfwMakeContextCurrent(window);
+        
+    }
+    else
+    {
+        glfwTerminate();
+        return -1;
+    }
 
     return 0;
 }
