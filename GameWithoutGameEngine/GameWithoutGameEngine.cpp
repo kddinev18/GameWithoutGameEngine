@@ -4,11 +4,19 @@
 int main()
 {
     GLFWInit();
-    GLFWwindow* window = glfwCreateWindow(800,800,"Hello Window", NULL, NULL);
+    int width = 800;
+    int height = 800;
+    GLFWwindow* window = glfwCreateWindow(width, height,"Hello Window", NULL, NULL);
     if (window != NULL)
     {
         glfwMakeContextCurrent(window);
-        
+        glViewport(0, 0, width, height);
+        while (!glfwWindowShouldClose(window))
+        {
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
     }
     else
     {
@@ -16,6 +24,7 @@ int main()
         return -1;
     }
 
+    glfwTerminate();
     return 0;
 }
 
