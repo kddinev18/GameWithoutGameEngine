@@ -1,9 +1,20 @@
-#include <GLFW/glfw3.h>
-#include "GameWithoutGameEngine.h"
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
 
 int main()
 {
-    GLFWInit();
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    float vertices[] = {
+    -0.5f, -0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+     0.0f,  0.5f, 0.0f
+    };
+    
+
     int width = 800;
     int height = 800;
     GLFWwindow* window = glfwCreateWindow(width, height,"Hello Window", NULL, NULL);
@@ -13,7 +24,6 @@ int main()
         glViewport(0, 0, width, height);
         while (!glfwWindowShouldClose(window))
         {
-
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
@@ -26,12 +36,4 @@ int main()
 
     glfwTerminate();
     return 0;
-}
-
-void GLFWInit()
-{
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
