@@ -1,6 +1,5 @@
 #include <GL\glew.h>
-#include <GLFW\glfw3.h>
-
+#include <glfw3.h>
 unsigned int setUpVertexBufferObjects(float* vertices)
 {
     unsigned int VBO;
@@ -39,33 +38,33 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
-    unsigned int VBO = setUpVertexBufferObjects(new float [] {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
-    });
-    unsigned int vertexShader = setUpVertexShader(
-        "#version 330 core\n"
-        "layout (location = 0) in vec3 aPos;\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "}\0");
-    unsigned int fragmentShader = setUpFragmenShader(
-        "#version 330 core\n"
-        "out vec4 FragColor;\n"
-        "void main()\n"
-        "{\n"
-        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-        "}\0");
-
     int width = 800;
     int height = 800;
     GLFWwindow* window = glfwCreateWindow(width, height,"Hello Window", NULL, NULL);
     if (window != NULL)
     {
         glfwMakeContextCurrent(window);
+        glewInit();
+
+        unsigned int VBO = setUpVertexBufferObjects(new float [] {
+            -0.5f, -0.5f, 0.0f,
+                0.5f, -0.5f, 0.0f,
+                0.0f, 0.5f, 0.0f
+            });
+        unsigned int vertexShader = setUpVertexShader(
+            "#version 330 core\n"
+            "layout (location = 0) in vec3 aPos;\n"
+            "void main()\n"
+            "{\n"
+            "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+            "}\0");
+        unsigned int fragmentShader = setUpFragmenShader(
+            "#version 330 core\n"
+            "out vec4 FragColor;\n"
+            "void main()\n"
+            "{\n"
+            "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+            "}\0");
         glViewport(0, 0, width, height);
         while (!glfwWindowShouldClose(window))
         {
