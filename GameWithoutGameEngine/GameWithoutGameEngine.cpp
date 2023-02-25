@@ -1,163 +1,121 @@
 #include <GL\glew.h>
 #include <glfw3.h>
+#include <cstdlib>
 #include <iostream>
-#include <string>
-#include "Shader.h"
-#include "stb_image.h"
+#include <time.h>
+#include "ShaderProgram.h"
+#include "FragmentShader.h"
+#include "VertexShader.h"
+#include "ErrorHandling.h"
+#include "VertexArray.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "Renderer.h"
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
 
-std::string vertexShaderSourcePath = "Shaders\\VertextShader.txt";
-std::string fragmentShaderSourcePath = "Shaders\\FragmentShader.txt";
-
-void handleInput(GLFWwindow* window, unsigned int texture1, unsigned int texture2)
+bool intialiseWindow(GLFWwindow* &window, int windowWidth, int windowHeight)
 {
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    if (!glfwInit())
     {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
+        std::cout << "Failed to intialize GLFW" << std::endl;
+        glfwTerminate();
+        return false;
     }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture2);
-    }
-}
-
-int main()
-{
-    glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
-        return -1;
+        return false;
     }
     glfwMakeContextCurrent(window);
-    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+    glfwSwapInterval(25);
+    glViewport(0, 0, windowWidth, windowHeight);
 
-    GLenum err = glewInit();
-    if (err != GLEW_OK)
+    if (glewInit())
     {
-        std::cout << "Failed to initialize GLEW" << std::endl;
-        return -1;
+        std::cout << "Failed to intialize GLEW" << std::endl;
+        glfwTerminate();
+        return false;
     }
 
-    Shader* shader = new Shader(vertexShaderSourcePath, fragmentShaderSourcePath);
-    shader->use();
+    return true;
+}
 
-    // Textures------------------------------------------------------------------
+int main()
+{
+    GLFWwindow* window;
+    intialiseWindow(window, 600, 600);
 
-    unsigned int texture1, texture2;
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
-
-    unsigned char* data = stbi_load("Textures\\container.jpg", &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    data = stbi_load("Textures\\awesomeface.png", &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-
-    shader->setInt("texture1", 0);
-    shader->setInt("texture2", 1);
-    //---------------------------------------------------------------------------
+    ShaderProgram shaderProgram;
+    Renderer renderer;
 
     float vertices[] = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+         0.0f ,  0.0f ,  0.0f,    1.0f, 0.0f, 0.0f, //a
+         0.5f ,  0.0f ,  0.0f,    1.0f, 1.0f, 0.0f, //b
+         0.45f,  0.20f,  0.0f,    1.0f, 0.0f, 1.0f, //1
+         0.35f,  0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //i
+         0.20f,  0.45f,  0.0f,    0.0f, 1.0f, 0.0f, //j
+         0.0f ,  0.5f ,  0.0f,    1.0f, 1.0f, 0.0f, //d
+        -0.20f,  0.45f,  0.0f,    0.0f, 1.0f, 1.0f, //l
+        -0.35f,  0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //g
+        -0.45f,  0.20f,  0.0f,    0.0f, 0.0f, 1.0f, //o
+        -0.5f ,  0.0f ,  0.0f,    1.0f, 0.0f, 1.0f, //e
+        -0.45f, -0.20f,  0.0f,    0.0f, 1.0f, 1.0f, //p
+        -0.35f, -0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //h
+        -0.20f, -0.45f,  0.0f,    1.0f, 0.0f, 0.0f, //k
+         0.0f , -0.5f ,  0.0f,    1.0f, 1.0f, 0.0f, //c
+         0.20f, -0.45f,  0.0f,    1.0f, 0.0f, 1.0f, //m
+         0.35f, -0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //f
+         0.45f, -0.20f,  0.0f,    0.0f, 1.0f, 0.0f, //n
     };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
+    unsigned int indices[] = {
+        0, 1, 2,
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 5,
+
+        0, 5, 6,
+        0, 6, 7,
+        0, 7, 8,
+        0, 8, 9,
+
+        0, 9, 10,
+        0, 10, 11,
+        0, 11, 12,
+        0, 12, 13,
+
+        0, 13, 14,
+        0, 14, 15,
+        0, 15, 16,
+        0, 16, 1,
     };
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    VertexArray VAO;
+    VertexBuffer VBO(vertices, sizeof(vertices), GL_STATIC_DRAW);
+    IndexBuffer EBO(indices, int(sizeof(indices)/sizeof(float)));
 
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    VertexBufferLayout VBL;
+    VBL.push<float>(3, false);
+    VBL.push<float>(3, false);
+    VAO.addBuffer(VBO, VBL);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
     while (!glfwWindowShouldClose(window))
     {
-        handleInput(window, texture1, texture2);
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.clear();
 
-        /*glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);*/
-
-
-        shader->use();
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        renderer.draw(VAO, EBO, shaderProgram);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    glDeleteBuffers(1, &EBO);
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+
+    
+
     glfwTerminate();
-    delete shader;
     return 0;
 }
