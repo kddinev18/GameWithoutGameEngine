@@ -25,7 +25,7 @@ bool intialiseWindow(GLFWwindow* &window, int windowWidth, int windowHeight)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "GameWithoutGameEngine", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -55,24 +55,25 @@ int main()
     Renderer renderer;
 
     float vertices[] = {
-         0.0f ,  0.0f ,  0.0f,    1.0f, 0.0f, 0.0f, //a
-         0.5f ,  0.0f ,  0.0f,    1.0f, 1.0f, 0.0f, //b
-         0.45f,  0.20f,  0.0f,    1.0f, 0.0f, 1.0f, //1
-         0.35f,  0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //i
-         0.20f,  0.45f,  0.0f,    0.0f, 1.0f, 0.0f, //j
-         0.0f ,  0.5f ,  0.0f,    1.0f, 1.0f, 0.0f, //d
-        -0.20f,  0.45f,  0.0f,    0.0f, 1.0f, 1.0f, //l
-        -0.35f,  0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //g
-        -0.45f,  0.20f,  0.0f,    0.0f, 0.0f, 1.0f, //o
-        -0.5f ,  0.0f ,  0.0f,    1.0f, 0.0f, 1.0f, //e
-        -0.45f, -0.20f,  0.0f,    0.0f, 1.0f, 1.0f, //p
-        -0.35f, -0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //h
-        -0.20f, -0.45f,  0.0f,    1.0f, 0.0f, 0.0f, //k
-         0.0f , -0.5f ,  0.0f,    1.0f, 1.0f, 0.0f, //c
-         0.20f, -0.45f,  0.0f,    1.0f, 0.0f, 1.0f, //m
-         0.35f, -0.35f,  0.0f,    1.0f, 1.0f, 1.0f, //f
-         0.45f, -0.20f,  0.0f,    0.0f, 1.0f, 0.0f, //n
+         0.0f ,  0.0f ,  0.0f,      1.0f, 0.0f, 0.0f, //a
+         0.5f ,  0.0f ,  0.0f,      1.0f, 1.0f, 0.0f, //b
+         0.45f,  0.20f,  0.0f,      1.0f, 0.0f, 1.0f, //1
+         0.35f,  0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //i
+         0.20f,  0.45f,  0.0f,      0.0f, 1.0f, 0.0f, //j
+         0.0f ,  0.5f ,  0.0f,      1.0f, 1.0f, 0.0f, //d
+        -0.20f,  0.45f,  0.0f,      0.0f, 1.0f, 1.0f, //l
+        -0.35f,  0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //g
+        -0.45f,  0.20f,  0.0f,      0.0f, 0.0f, 1.0f, //o
+        -0.5f ,  0.0f ,  0.0f,      1.0f, 0.0f, 1.0f, //e
+        -0.45f, -0.20f,  0.0f,      0.0f, 1.0f, 1.0f, //p
+        -0.35f, -0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //h
+        -0.20f, -0.45f,  0.0f,      1.0f, 0.0f, 0.0f, //k
+         0.0f , -0.5f ,  0.0f,      1.0f, 1.0f, 0.0f, //c
+         0.20f, -0.45f,  0.0f,      1.0f, 0.0f, 1.0f, //m
+         0.35f, -0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //f
+         0.45f, -0.20f,  0.0f,      0.0f, 1.0f, 0.0f, //n
     };
+
     unsigned int indices[] = {
         0, 1, 2,
         0, 2, 3,
@@ -113,8 +114,6 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    
 
     glfwTerminate();
     return 0;
