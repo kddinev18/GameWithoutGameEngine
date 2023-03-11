@@ -11,6 +11,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Renderer.h"
+#include "Texture.h"
 
 
 bool intialiseWindow(GLFWwindow* &window, int windowWidth, int windowHeight)
@@ -55,45 +56,15 @@ int main()
     Renderer renderer;
 
     float vertices[] = {
-         0.0f ,  0.0f ,  0.0f,      1.0f, 0.0f, 0.0f, //a
-         0.5f ,  0.0f ,  0.0f,      1.0f, 1.0f, 0.0f, //b
-         0.45f,  0.20f,  0.0f,      1.0f, 0.0f, 1.0f, //1
-         0.35f,  0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //i
-         0.20f,  0.45f,  0.0f,      0.0f, 1.0f, 0.0f, //j
-         0.0f ,  0.5f ,  0.0f,      1.0f, 1.0f, 0.0f, //d
-        -0.20f,  0.45f,  0.0f,      0.0f, 1.0f, 1.0f, //l
-        -0.35f,  0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //g
-        -0.45f,  0.20f,  0.0f,      0.0f, 0.0f, 1.0f, //o
-        -0.5f ,  0.0f ,  0.0f,      1.0f, 0.0f, 1.0f, //e
-        -0.45f, -0.20f,  0.0f,      0.0f, 1.0f, 1.0f, //p
-        -0.35f, -0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //h
-        -0.20f, -0.45f,  0.0f,      1.0f, 0.0f, 0.0f, //k
-         0.0f , -0.5f ,  0.0f,      1.0f, 1.0f, 0.0f, //c
-         0.20f, -0.45f,  0.0f,      1.0f, 0.0f, 1.0f, //m
-         0.35f, -0.35f,  0.0f,      1.0f, 1.0f, 1.0f, //f
-         0.45f, -0.20f,  0.0f,      0.0f, 1.0f, 0.0f, //n
+        // positions          // colors           // texture coords
+         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
     };
-
     unsigned int indices[] = {
-        0, 1, 2,
-        0, 2, 3,
-        0, 3, 4,
-        0, 4, 5,
-
-        0, 5, 6,
-        0, 6, 7,
-        0, 7, 8,
-        0, 8, 9,
-
-        0, 9, 10,
-        0, 10, 11,
-        0, 11, 12,
-        0, 12, 13,
-
-        0, 13, 14,
-        0, 14, 15,
-        0, 15, 16,
-        0, 16, 1,
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
     };
 
     VertexArray VAO;
@@ -103,7 +74,12 @@ int main()
     VertexBufferLayout VBL;
     VBL.push<float>(3, false);
     VBL.push<float>(3, false);
+    VBL.push<float>(2, false);
     VAO.addBuffer(VBO, VBL);
+
+    Texture texture("test.png");
+    texture.Bind(0);
+    shaderProgram.setInt("Texture", 0);
 
     while (!glfwWindowShouldClose(window))
     {
