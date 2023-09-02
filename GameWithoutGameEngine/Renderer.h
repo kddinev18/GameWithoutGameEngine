@@ -7,4 +7,5 @@ class Renderer
 public:
 	void clear() const;
 	void draw(const VertexArray& VAO, const IndexBuffer& EBO, const ShaderProgram& program) const;
+	void draw(const VertexArray& VAO, const ShaderProgram& shader, unsigned int count) const;
 };

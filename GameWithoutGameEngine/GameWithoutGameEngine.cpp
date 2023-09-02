@@ -19,90 +19,111 @@
 #include "IndexBuffer.h"
 #include "Renderer.h"
 #include "Texture.h"
+#include "Window.h"
 
+float vertices[] = {
+	// positions          // colors
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-bool intialiseWindow(GLFWwindow* &window, int windowWidth, int windowHeight)
-{
-    if (!glfwInit())
-    {
-        std::cout << "Failed to intialize GLFW" << std::endl;
-        glfwTerminate();
-        return false;
-    }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "GameWithoutGameEngine", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return false;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(25);
-    glViewport(0, 0, windowWidth, windowHeight);
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-    if (glewInit())
-    {
-        std::cout << "Failed to intialize GLEW" << std::endl;
-        glfwTerminate();
-        return false;
-    }
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-    return true;
-}
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
 
 int main()
 {
-    GLFWwindow* window;
-    intialiseWindow(window, 600, 600);
+	Window window(600, 600, true, true);
 
-    ShaderProgram shaderProgram;
-    Renderer renderer;
+	ShaderProgram shaderProgram;
+	Renderer renderer;
 
-    float vertices[] = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
-    };
-    unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
+	VertexArray VAO;
+	VertexBuffer VBO(vertices, sizeof(vertices), GL_STATIC_DRAW);
+	VertexBufferLayout VBL;
+	VBL.push<float>(3, false);
+	VBL.push<float>(2, false);
+	VAO.addBuffer(VBO, VBL);
 
-    VertexArray VAO;
-    VertexBuffer VBO(vertices, sizeof(vertices), GL_STATIC_DRAW);
-    IndexBuffer EBO(indices, int(sizeof(indices)/sizeof(float)));
+	Texture texture("test.png");
+	texture.Bind(0);
+	shaderProgram.setInt("Texture", 0);
 
-    VertexBufferLayout VBL;
-    VBL.push<float>(3, false);
-    VBL.push<float>(3, false);
-    VBL.push<float>(2, false);
-    VAO.addBuffer(VBO, VBL);
+	double prevTime = 0.0;
+	double currTime = 0.0;
+	double timeDiff;
+	unsigned int counter = 0;
 
-    Texture texture("test.png");
-    texture.Bind(0);
-    shaderProgram.setInt("Texture", 0);
+	while (!glfwWindowShouldClose(window.getWindow()))
+	{
+		currTime = glfwGetTime();
+		timeDiff = currTime - prevTime;
+		counter++;
+		if (timeDiff >= 1.0 / 30.0)
+		{
+			std::string fps = std::to_string((1.0 / timeDiff) * counter);
+			std::string ms = std::to_string((timeDiff / counter) * 1000);
+			glfwSetWindowTitle(window.getWindow(), (fps + " FPS, " + ms + " MS").c_str());
+		}
 
-    while (!glfwWindowShouldClose(window))
-    {
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        shaderProgram.setMat4("transform", trans);
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        renderer.clear();
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
-        renderer.draw(VAO, EBO, shaderProgram);
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+		shaderProgram.setMat4("model", model);
+		shaderProgram.setMat4("view", view);
+		shaderProgram.setMat4("projection", projection);
 
-    glfwTerminate();
-    return 0;
+		renderer.clear();
+
+		renderer.draw(VAO, shaderProgram, (sizeof(vertices) / 4) / 5);
+
+		glfwSwapInterval(0);
+		glfwSwapBuffers(window.getWindow());
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
+	return 0;
 }
