@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
-#include <GL/glew.h>
+#include "Includes.h"
+
 struct Layout
 {
 	unsigned int type;

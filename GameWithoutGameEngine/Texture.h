@@ -1,5 +1,6 @@
 #pragma once
-#include <string>
+#include "Includes.h"
+
 class Texture
 {
 private:

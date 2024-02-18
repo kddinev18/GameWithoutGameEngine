@@ -1,8 +1,6 @@
 #include "Window.h"
-#include<string>
-#include<cstring>
 
-Window::Window(int windowWidth, int windowHeight, bool setCurrentContext, bool enableZIndex)
+Window::Window(int windowWidth, int windowHeight, bool setCurrentContext, bool enableZIndex) : windowHeight(windowHeight), windowWidth(windowWidth)
 {
 	counter = 0;
 	if (!glfwInit())

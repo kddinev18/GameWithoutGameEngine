@@ -1,11 +1,6 @@
 #include "ShaderProgram.h"
 #include "FragmentShader.h"
 #include "VertexShader.h"
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <iostream>
 #include "ErrorHandling.h"
 
 unsigned int ShaderProgram::compileShader(const std::string& sourceCode, unsigned int type)
@@ -122,7 +117,7 @@ void ShaderProgram::setMat4(const std::string& name, const glm::mat4& mat) const
     glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
- unsigned int ShaderProgram::getId() const
+unsigned int ShaderProgram::getId() const
 {
     return id;
 }

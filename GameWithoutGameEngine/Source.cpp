@@ -1,15 +1,4 @@
-#include <GL\glew.h>
-#include <glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <cstdlib>
-
-#include <iostream>
-#include <time.h>
-
+#include "Includes.h"
 #include "ShaderProgram.h"
 #include "FragmentShader.h"
 #include "VertexShader.h"
@@ -20,6 +9,7 @@
 #include "Renderer.h"
 #include "Texture.h"
 #include "Window.h"
+#include "Camera.h"
 
 float vertices[] = {
 	// positions          // colors
@@ -72,6 +62,7 @@ int main()
 
 	ShaderProgram shaderProgram;
 	Renderer renderer;
+	Camera camera(window.windowWidth, window.windowWidth, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	VertexArray VAO;
 	VertexBuffer VBO(vertices, sizeof(vertices), GL_STATIC_DRAW);
@@ -91,29 +82,15 @@ int main()
 
 	while (!glfwWindowShouldClose(window.getWindow()))
 	{
-		currTime = glfwGetTime();
-		timeDiff = currTime - prevTime;
-		counter++;
-		if (timeDiff >= 1.0 / 30.0)
-		{
-			std::string fps = std::to_string((1.0 / timeDiff) * counter);
-			std::string ms = std::to_string((timeDiff / counter) * 1000);
-			glfwSetWindowTitle(window.getWindow(), (fps + " FPS, " + ms + " MS").c_str());
-		}
+		window.displayFrameRate();
+		camera.matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camera");
+		camera.inputs(window);
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
 		shaderProgram.setMat4("model", model);
-		shaderProgram.setMat4("view", view);
-		shaderProgram.setMat4("projection", projection);
 
 		renderer.clear();
 
